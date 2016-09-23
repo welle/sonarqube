@@ -50,8 +50,6 @@ import static org.sonarqube.ws.Organizations.Organization;
 public class CreateActionTest {
   private static final String SOME_UUID = "uuid";
   private static final long SOME_DATE = 1_200_000L;
-  private static final String STRING_65_CHARS_LONG = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz1234567890-ab";
-  private static final String STRING_257_CHARS_LONG = String.format("%1$257.257s", "a").replace(" ", "a");
 
   @Rule
   public UserSessionRule userSession = UserSessionRule.standalone();
@@ -149,9 +147,9 @@ public class CreateActionTest {
     giveUserSystemAdminPermission();
 
     expectedException.expect(IllegalArgumentException.class);
-    expectedException.expectMessage("Name '" + STRING_65_CHARS_LONG + "' must be at most 64 chars long");
+    expectedException.expectMessage("Name '" + OrganizationsWsTestSupport.STRING_65_CHARS_LONG + "' must be at most 64 chars long");
 
-    executeRequest(STRING_65_CHARS_LONG);
+    executeRequest(OrganizationsWsTestSupport.STRING_65_CHARS_LONG);
   }
 
   @Test
@@ -159,7 +157,7 @@ public class CreateActionTest {
     giveUserSystemAdminPermission();
     mockForSuccessfulInsert(SOME_UUID, SOME_DATE);
 
-    String name = STRING_65_CHARS_LONG.substring(0, 64);
+    String name = OrganizationsWsTestSupport.STRING_65_CHARS_LONG.substring(0, 64);
 
     verifyResponseAndDb(executeRequest(name), SOME_UUID, name, name.substring(0, 32), SOME_DATE);
   }
@@ -178,7 +176,7 @@ public class CreateActionTest {
   public void request_fails_if_key_is_33_chars_long() {
     giveUserSystemAdminPermission();
 
-    String key = STRING_65_CHARS_LONG.substring(0, 33);
+    String key = OrganizationsWsTestSupport.STRING_65_CHARS_LONG.substring(0, 33);
 
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("Key '" + key + "' must be at most 32 chars long");
@@ -199,7 +197,7 @@ public class CreateActionTest {
     giveUserSystemAdminPermission();
     mockForSuccessfulInsert(SOME_UUID, SOME_DATE);
 
-    String key = STRING_65_CHARS_LONG.substring(0, 32);
+    String key = OrganizationsWsTestSupport.STRING_65_CHARS_LONG.substring(0, 32);
 
     verifyResponseAndDb(executeRequest("foo", key), SOME_UUID, "foo", key, SOME_DATE);
   }
@@ -254,10 +252,10 @@ public class CreateActionTest {
   @Test
   public void request_fails_if_key_computed_from_name_already_exists_in_DB() {
     giveUserSystemAdminPermission();
-    String key = STRING_65_CHARS_LONG.substring(0, 32);
+    String key = OrganizationsWsTestSupport.STRING_65_CHARS_LONG.substring(0, 32);
     insertOrganization(key);
 
-    String name = STRING_65_CHARS_LONG.substring(0, 64);
+    String name = OrganizationsWsTestSupport.STRING_65_CHARS_LONG.substring(0, 64);
 
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("Key '" + key + "' generated from name '" + name + "' is already used. Specify one.");
@@ -288,7 +286,7 @@ public class CreateActionTest {
     giveUserSystemAdminPermission();
     mockForSuccessfulInsert(SOME_UUID, SOME_DATE);
 
-    String name = STRING_65_CHARS_LONG.substring(0, 33);
+    String name = OrganizationsWsTestSupport.STRING_65_CHARS_LONG.substring(0, 33);
 
     CreateWsResponse response = executeRequest(name);
     verifyResponseAndDb(response, SOME_UUID, name, name.substring(0, 32), SOME_DATE);
@@ -310,16 +308,16 @@ public class CreateActionTest {
     giveUserSystemAdminPermission();
 
     expectedException.expect(IllegalArgumentException.class);
-    expectedException.expectMessage("description '" + STRING_257_CHARS_LONG + "' must be at most 256 chars long");
+    expectedException.expectMessage("description '" + OrganizationsWsTestSupport.STRING_257_CHARS_LONG + "' must be at most 256 chars long");
 
-    executeRequest("foo", "bar", STRING_257_CHARS_LONG, null, null);
+    executeRequest("foo", "bar", OrganizationsWsTestSupport.STRING_257_CHARS_LONG, null, null);
   }
 
   @Test
   public void request_succeeds_if_description_is_256_chars_long() {
     giveUserSystemAdminPermission();
     mockForSuccessfulInsert(SOME_UUID, SOME_DATE);
-    String description = STRING_257_CHARS_LONG.substring(0, 256);
+    String description = OrganizationsWsTestSupport.STRING_257_CHARS_LONG.substring(0, 256);
 
     CreateWsResponse response = executeRequest("foo", "bar", description, null, null);
     verifyResponseAndDb(response, SOME_UUID, "foo", "bar", description, null, null, SOME_DATE);
@@ -330,16 +328,16 @@ public class CreateActionTest {
     giveUserSystemAdminPermission();
 
     expectedException.expect(IllegalArgumentException.class);
-    expectedException.expectMessage("url '" + STRING_257_CHARS_LONG + "' must be at most 256 chars long");
+    expectedException.expectMessage("url '" + OrganizationsWsTestSupport.STRING_257_CHARS_LONG + "' must be at most 256 chars long");
 
-    executeRequest("foo", "bar", null, STRING_257_CHARS_LONG, null);
+    executeRequest("foo", "bar", null, OrganizationsWsTestSupport.STRING_257_CHARS_LONG, null);
   }
 
   @Test
   public void request_succeeds_if_url_is_256_chars_long() {
     giveUserSystemAdminPermission();
     mockForSuccessfulInsert(SOME_UUID, SOME_DATE);
-    String url = STRING_257_CHARS_LONG.substring(0, 256);
+    String url = OrganizationsWsTestSupport.STRING_257_CHARS_LONG.substring(0, 256);
 
     CreateWsResponse response = executeRequest("foo", "bar", null, url, null);
     verifyResponseAndDb(response, SOME_UUID, "foo", "bar", null, url, null, SOME_DATE);
@@ -350,16 +348,16 @@ public class CreateActionTest {
     giveUserSystemAdminPermission();
 
     expectedException.expect(IllegalArgumentException.class);
-    expectedException.expectMessage("avatar '" + STRING_257_CHARS_LONG + "' must be at most 256 chars long");
+    expectedException.expectMessage("avatar '" + OrganizationsWsTestSupport.STRING_257_CHARS_LONG + "' must be at most 256 chars long");
 
-    executeRequest("foo", "bar", null, null, STRING_257_CHARS_LONG);
+    executeRequest("foo", "bar", null, null, OrganizationsWsTestSupport.STRING_257_CHARS_LONG);
   }
 
   @Test
   public void request_succeeds_if_avatar_is_256_chars_long() {
     giveUserSystemAdminPermission();
     mockForSuccessfulInsert(SOME_UUID, SOME_DATE);
-    String avatar = STRING_257_CHARS_LONG.substring(0, 256);
+    String avatar = OrganizationsWsTestSupport.STRING_257_CHARS_LONG.substring(0, 256);
 
     CreateWsResponse response = executeRequest("foo", "bar", null, null, avatar);
     verifyResponseAndDb(response, SOME_UUID, "foo", "bar", null, null, avatar, SOME_DATE);
@@ -402,17 +400,11 @@ public class CreateActionTest {
 
   private static void populateRequest(@Nullable String name, @Nullable String key, @Nullable String description, @Nullable String url, @Nullable String avatar,
     TestRequest request) {
-    setParam(request, "name", name);
-    setParam(request, "key", key);
-    setParam(request, "description", description);
-    setParam(request, "url", url);
-    setParam(request, "avatar", avatar);
-  }
-
-  private static void setParam(TestRequest request, String param, @Nullable String value) {
-    if (value != null) {
-      request.setParam(param, value);
-    }
+    OrganizationsWsTestSupport.setParam(request, "name", name);
+    OrganizationsWsTestSupport.setParam(request, "key", key);
+    OrganizationsWsTestSupport.setParam(request, "description", description);
+    OrganizationsWsTestSupport.setParam(request, "url", url);
+    OrganizationsWsTestSupport.setParam(request, "avatar", avatar);
   }
 
   private void verifyResponseAndDb(CreateWsResponse response,
