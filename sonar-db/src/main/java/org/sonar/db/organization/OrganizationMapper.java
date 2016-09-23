@@ -30,4 +30,13 @@ public interface OrganizationMapper {
   OrganizationDto selectByKey(@Param("key") String key);
 
   OrganizationDto selectByUuid(@Param("uuid") String uuid);
+
+  /**
+   * Update the organization with UUID specified by {@link OrganizationDto#getUuid()}.
+   * <p>
+   * This method ignores {@link OrganizationDto#getCreatedAt()} and {@link OrganizationDto#getKey()}
+   * (they are not updated).
+   * </p>
+   */
+  int update(@Param("organization") OrganizationDto organization);
 }
