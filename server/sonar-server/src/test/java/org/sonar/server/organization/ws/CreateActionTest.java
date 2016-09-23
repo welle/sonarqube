@@ -39,6 +39,7 @@ import org.sonar.server.ws.TestRequest;
 import org.sonar.server.ws.WsActionTester;
 import org.sonarqube.ws.MediaTypes;
 import org.sonarqube.ws.Organizations.CreateWsResponse;
+import org.sonarqube.ws.Organizations.Organization;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -55,13 +56,13 @@ public class CreateActionTest {
   @Rule
   public UserSessionRule userSession = UserSessionRule.standalone();
   @Rule
-  public final DbTester dbTester = DbTester.create(System2.INSTANCE);
+  public DbTester dbTester = DbTester.create(System2.INSTANCE);
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
 
   private UuidFactory uuidFactory = mock(UuidFactory.class);
   private System2 system2 = mock(System2.class);
-  private CreateAction underTest = new CreateAction(userSession, dbTester.getDbClient(), uuidFactory, system2);
+  private CreateAction underTest = new CreateAction(userSession, dbTester.getDbClient(), uuidFactory, system2, new OrganizationsWsSupport());
   private WsActionTester wsTester = new WsActionTester(underTest);
 
   @Test

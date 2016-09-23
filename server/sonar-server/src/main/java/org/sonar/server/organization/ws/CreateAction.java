@@ -37,7 +37,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Math.min;
 import static org.sonar.core.util.Slug.slugify;
 import static org.sonar.server.ws.WsUtils.writeProtobuf;
-import static org.sonarqube.ws.Organizations.Organization;
 
 public class CreateAction implements OrganizationsAction {
   private static final String ACTION = "create";
@@ -55,12 +54,14 @@ public class CreateAction implements OrganizationsAction {
   private final DbClient dbClient;
   private final UuidFactory uuidFactory;
   private final System2 system2;
+  private final OrganizationsWsSupport wsSupport;
 
-  public CreateAction(UserSession userSession, DbClient dbClient, UuidFactory uuidFactory, System2 system2) {
+  public CreateAction(UserSession userSession, DbClient dbClient, UuidFactory uuidFactory, System2 system2, OrganizationsWsSupport wsSupport) {
     this.userSession = userSession;
     this.dbClient = dbClient;
     this.uuidFactory = uuidFactory;
     this.system2 = system2;
+    this.wsSupport = wsSupport;
   }
 
   @Override
@@ -180,22 +181,8 @@ public class CreateAction implements OrganizationsAction {
   }
 
   private void writeResponse(Request request, Response response, OrganizationDto dto) {
-    Organization.Builder builder = Organization.newBuilder()
-      .setUuid(dto.getUuid())
-      .setName(dto.getName())
-      .setKey(dto.getKey());
-    if (dto.getDescription() != null) {
-      builder.setDescription(dto.getDescription());
-    }
-    if (dto.getUrl() != null) {
-      builder.setUrl(dto.getUrl());
-    }
-    if (dto.getAvatarUrl() != null) {
-      builder.setAvatar(dto.getAvatarUrl());
-    }
-    writeProtobuf(CreateWsResponse.newBuilder()
-      .setOrganization(builder.build())
-      .build(),
+    writeProtobuf(
+      CreateWsResponse.newBuilder().setOrganization(wsSupport.toOrganization(dto)).build(),
       request,
       response);
   }
