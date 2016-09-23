@@ -39,4 +39,8 @@ public interface OrganizationMapper {
    * </p>
    */
   int update(@Param("organization") OrganizationDto organization);
+
+  int deleteByUuid(@Param("uuid") String uuid);
+
+  int deleteByKey(@Param("key") String key);
 }
